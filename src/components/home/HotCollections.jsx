@@ -78,6 +78,26 @@ const HotCollections = () => {
     slidesToScroll: 1,    
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
+    responsive: [
+     {
+      breakpoint: 1400,
+      settings: {
+        slidesToShow: 3,
+      },
+     },
+     {
+      breakpoint: 990,
+      settings: {
+        slidesToShow: 2,
+      },
+     },
+     {
+      breakpoint: 605,
+      settings: {
+        slidesToShow: 1,
+      }
+     },
+    ],
   };
 
   const [collections, setCollections] = useState([]);
