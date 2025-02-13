@@ -1,27 +1,101 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import AuthorImage from "../../images/author_thumbnail.jpg";
-import nftImage from "../../images/nftImage.jpg";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "@fortawesome/fontawesome-free/css/all.min.css";
+import "../../css/styles/customSlider.css";
+
+/*import AuthorImage from "../../images/author_thumbnail.jpg";
+import nftImage from "../../images/nftImage.jpg";*/
+
+function NextArrow(props) {
+  const {className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{
+        ...style,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "white",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+        borderRadius: "50%",
+        width: "40px",
+        height: "40px",
+        position: "absolute",
+        right: "-15px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        zIndex: 2,        
+        cursor: "pointer",
+      }}
+      onClick={onClick}
+    >
+      {/* Font Awesome icon (ensure font-awesome is loaded in your project) */}
+      <i className="fa fa-arrow-right" style={{ color: "black", fontSize: "1rem" }}></i>
+    </div>      
+    
+  )
+}
+
+function PrevArrow(props) {
+  const {className, style, onClick } = props;
+  return (
+    <div
+    className={className}
+    style={{
+      ...style,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "white",
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+      borderRadius: "50%",
+      width: "40px",
+      height: "40px",
+      position: "absolute",
+      left: "-15px",
+      top: "50%",
+      transform: "translateY(-50%)",
+      zIndex: 2,
+      cursor: "pointer",
+      }}
+      onClick={onClick}
+      >
+      <i className="fa fa-arrow-left" style={{ color: "black", fontSize: "1rem" }}></i>
+    </div>      
+    
+  )
+}
 
 const HotCollections = () => {
+  const settings = {    
+    infinite: true,
+    slidesToShow: 4,
+    slidesToScroll: 1,    
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+  };
 
   const [collections, setCollections] = useState([]);
 
-  async function fetchCollections() {
-    try {
-      const response = await axios.get('https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections');
-      setCollections(response.data);
-      console.log(response.data);
-      
-    } catch (error) {
-      console.error('Error fetching data', error);
-    }
-  }
-
   useEffect(() => {
+    async function fetchCollections() {
+      try {
+        const response = await axios.get('https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections');
+        setCollections([...response.data]); // Force re-render
+        console.log(response.data)
+      } catch (error) {
+        console.error('Error fetching data', error);
+      }
+    }
+  
     fetchCollections();
-  }, [])
+  }, []);
+  
   
   return (
     <section id="section-collections" className="no-bottom">
@@ -33,29 +107,41 @@ const HotCollections = () => {
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
-          {collections.map((collection) => (
-            <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={collection.id}>
-              <div className="nft_coll">
-                <div className="nft_wrap">
-                  <Link to="/item-details">
-                    <img src={collection.nftImage} className="lazy img-fluid" alt="" />
-                  </Link>
+          <div className="slider-container">
+            <Slider {...settings}>
+              {collections.map((collection) => (
+                <div key={collection.id}>                  
+                  <div className="nft_coll">
+                    <div className="nft_wrap">
+                      <Link to="/item-details">
+                        <img
+                          src={collection.nftImage}
+                          className="lazy img-fluid"
+                          alt=""
+                        />
+                      </Link>
+                    </div>
+                    <div className="nft_coll_pp">
+                      <Link to="/author">
+                        <img
+                          className="lazy pp-coll"
+                          src={collection.authorImage}
+                          alt=""
+                        />
+                      </Link>
+                      <i className="fa fa-check"></i>
+                    </div>
+                    <div className="nft_coll_info">
+                      <Link to="/explore">
+                        <h4>{collection.title}</h4>
+                      </Link>
+                      <span>ERC-{collection.code}</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="nft_coll_pp">
-                  <Link to="/author">
-                    <img className="lazy pp-coll" src={collection.authorImage} alt="" />
-                  </Link>
-                  <i className="fa fa-check"></i>
-                </div>
-                <div className="nft_coll_info">
-                  <Link to="/explore">
-                    <h4>{collection.title}</h4>
-                  </Link>
-                  <span>ERC-{collection.code}</span>
-                </div>
-              </div>
-            </div>
-          ))}
+              ))}
+            </Slider>
+          </div>
         </div>
       </div>
     </section>
