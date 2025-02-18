@@ -2,13 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Slider from "react-slick";
+import Skeleton from "react-loading-skeleton";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "../../css/styles/customSlider.css";
+import "react-loading-skeleton/dist/skeleton.css";
+import "../../css/styles/skeletonCollections.css"
 
-/*import AuthorImage from "../../images/author_thumbnail.jpg";
-import nftImage from "../../images/nftImage.jpg";*/
+// import AuthorImage from "../../images/author_thumbnail.jpg";
+// import nftImage from "../../images/nftImage.jpg";
 
 function NextArrow(props) {
   const {className, style, onClick } = props;
@@ -101,12 +104,15 @@ const HotCollections = () => {
   };
 
   const [collections, setCollections] = useState([]);
+  const [ loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function fetchCollections() {
       try {
+        setLoading(true);        
         const response = await axios.get('https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections');
         setCollections([...response.data]); // Force re-render
+        setLoading(false);
         console.log(response.data)
       } catch (error) {
         console.error('Error fetching data', error);
@@ -127,9 +133,15 @@ const HotCollections = () => {
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
-          <div className="slider-container">
+          <div className="slider-container">            
             <Slider {...settings}>
-              {collections.map((collection) => (
+              {loading
+                ? Array.from({length: 4}).map((_, index) => (
+                  <div key={index}>
+                    <SkeletonCollections />
+                  </div>
+                ))
+                : collections.map((collection) => (
                 <div key={collection.id}>                  
                   <div className="nft_coll">
                     <div className="nft_wrap">
@@ -160,12 +172,27 @@ const HotCollections = () => {
                   </div>
                 </div>
               ))}
-            </Slider>
+            </Slider>            
           </div>
         </div>
-      </div>
+      </div>            
     </section>
   );
 };
+
+const SkeletonCollections = () => (
+  <div className="nft_coll">
+    <div className="nft_wrap">
+      <Skeleton height={200} />
+    </div>
+    <div className="nft_coll_pp">
+      <Skeleton circle width={50} height={50} />
+    </div>
+    <div className="nft_coll_info">
+      <Skeleton width={100} height={20} />
+      <Skeleton width={60} height={15} />
+    </div>
+  </div>
+);
 
 export default HotCollections;
