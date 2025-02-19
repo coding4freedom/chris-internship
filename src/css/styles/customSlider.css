@@ -1,0 +1,11 @@
+div.slick-next::before {
+    display: none;
+}
+
+div.slick-prev::before {
+    display: none;
+}
+
+.slick-slide > div {
+   margin: 0 10px;
+}
