@@ -8,10 +8,7 @@ import "slick-carousel/slick/slick-theme.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import "../../css/styles/customSlider.css";
 import "react-loading-skeleton/dist/skeleton.css";
-import "../../css/styles/skeletonCollections.css"
 
-// import AuthorImage from "../../images/author_thumbnail.jpg";
-// import nftImage from "../../images/nftImage.jpg";
 
 function NextArrow(props) {
   const {className, style, onClick } = props;
@@ -36,8 +33,7 @@ function NextArrow(props) {
         cursor: "pointer",
       }}
       onClick={onClick}
-    >
-      {/* Font Awesome icon (ensure font-awesome is loaded in your project) */}
+    >      
       <i className="fa fa-arrow-right" style={{ color: "black", fontSize: "1rem" }}></i>
     </div>      
     
@@ -104,16 +100,15 @@ const HotCollections = () => {
   };
 
   const [collections, setCollections] = useState([]);
-  const [ loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     async function fetchCollections() {
       try {
         setLoading(true);        
         const response = await axios.get('https://us-central1-nft-cloud-functions.cloudfunctions.net/hotCollections');
-        setCollections([...response.data]); // Force re-render
-        setLoading(false);
-        console.log(response.data)
+        setCollections([...response.data]); 
+        setLoading(false);        
       } catch (error) {
         console.error('Error fetching data', error);
       }
