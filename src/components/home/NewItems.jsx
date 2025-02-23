@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Slider from "react-slick";
+import Skeleton from "react-loading-skeleton";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../../css/styles/customSlider.css";
+import "react-loading-skeleton/dist/skeleton.css";
 
 function NextArrow(props) {
   const {className, style, onClick } = props;
@@ -96,14 +98,16 @@ const NewItems = () => {
     ],
   };
 
-  const [ newItems, setNewItems ] = useState([]);  
+  const [ newItems, setNewItems ] = useState([]); 
+  const [ loading, setLoading ] = useState(false); 
 
   useEffect(() => {
     async function fetchNewItems() {
       try {
+        setLoading(true)
         const response = await axios.get("https://us-central1-nft-cloud-functions.cloudfunctions.net/newItems");
         setNewItems(response.data);
-        console.log(response.data)
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching data', error)
       }
@@ -125,7 +129,13 @@ const NewItems = () => {
           </div>
           <div className="slider-container">
             <Slider {...settings} >
-                {newItems.map((item) => (                  
+                {loading
+                  ? Array.from({length: 4}).map((_, index) => (
+                    <div key={index}>
+                      <SkeletonCollections />
+                    </div>
+                  ))
+                  : newItems.map((item) => (                  
                     <div className="nft__item" key={item.id}>
                       <div className="author_list_pp">
                         <Link
@@ -211,6 +221,25 @@ function getTimeLeft(unix) {
   const hours = Math.floor(milis / 1000 / 60 / 60);
   return `${hours}h ${minutes}m ${seconds}s`
 }
+
+const SkeletonCollections = () => (
+  <div className="nft__item">
+    <div className="author_list_pp">      
+      <Skeleton circle width={50} height={50} />
+      <i className="fa fa-check"></i>      
+    </div>
+    <div className="nft__item_wrap">
+      <Skeleton height={350} width={262} />      
+    </div>
+    <div className="nft__item_info">      
+      <Skeleton width={150} height={25} />      
+      <Skeleton width={75} height={15} />
+      <div className="nft__item_like">
+        <Skeleton width={30} height={15} />
+      </div>
+    </div>
+  </div>
+)
 
 export default NewItems;
 
