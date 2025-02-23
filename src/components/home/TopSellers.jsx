@@ -1,8 +1,27 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import AuthorImage from "../../images/author_thumbnail.jpg";
+import axios from "axios";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
 
 const TopSellers = () => {
+  const [ topData, setTopData ] = useState([]);
+  const [ loading, setLoading ] = useState(false);
+
+  useEffect(() => {
+    async function fetchTopSeller()  {
+      try {
+        setLoading(true)      
+        const response = await axios.get("https://us-central1-nft-cloud-functions.cloudfunctions.net/topSellers");
+        setTopData(response.data);
+        setLoading(false)              
+      } catch (error) {
+        console.error('Error while loading data', error)
+      }
+    }
+    fetchTopSeller()
+  }, [])
+
   return (
     <section id="section-popular" className="pb-5">
       <div className="container">
@@ -15,21 +34,27 @@ const TopSellers = () => {
           </div>
           <div className="col-md-12">
             <ol className="author_list">
-              {new Array(12).fill(0).map((_, index) => (
+              {loading
+              ? Array.from({length: 12}).map((_, index) => (
                 <li key={index}>
+                <SkeletonSellers />
+                </li>
+              ))
+              :topData.map((seller) => (
+                <li key={seller.id}>
                   <div className="author_list_pp">
-                    <Link to="/author">
+                    <Link to={`/author/${seller.authorId}`}>
                       <img
                         className="lazy pp-author"
-                        src={AuthorImage}
+                        src={seller.authorImage}
                         alt=""
                       />
                       <i className="fa fa-check"></i>
                     </Link>
                   </div>
                   <div className="author_list_info">
-                    <Link to="/author">Monica Lucas</Link>
-                    <span>2.1 ETH</span>
+                    <Link to={`/author/${seller.authorId}`}>{seller.authorName}</Link>
+                    <span>{seller.price} ETH</span>
                   </div>
                 </li>
               ))}
@@ -40,5 +65,18 @@ const TopSellers = () => {
     </section>
   );
 };
+
+const SkeletonSellers = () => (
+  <>
+    <div className="author_list_pp">
+      <Skeleton circle width={50} height={50} />
+      <i className="fa fa-check"></i>      
+    </div>
+    <div className="author_list_info">
+      <Skeleton width={150} height={20} />
+      <Skeleton width={50} height={15} />
+    </div>
+  </>
+)
 
 export default TopSellers;
