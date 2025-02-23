@@ -1,11 +1,102 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import AuthorImage from "../../images/author_thumbnail.jpg";
-import nftImage from "../../images/nftImage.jpg";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import "../../css/styles/customSlider.css";
+
+function NextArrow(props) {
+  const {className, style, onClick } = props;
+  return (
+    <div
+      className={className}
+      style={{
+        ...style,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "white",
+        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+        borderRadius: "50%",
+        width: "40px",
+        height: "40px",
+        position: "absolute",
+        right: "-15px",
+        top: "50%",
+        transform: "translateY(-50%)",
+        zIndex: 2,        
+        cursor: "pointer",
+      }}
+      onClick={onClick}
+    >      
+      <i className="fa fa-arrow-right" style={{ color: "black", fontSize: "1rem" }}></i>
+    </div>      
+    
+  )
+}
+
+function PrevArrow(props) {
+  const {className, style, onClick } = props;
+  return (
+    <div
+    className={className}
+    style={{
+      ...style,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "white",
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+      borderRadius: "50%",
+      width: "40px",
+      height: "40px",
+      position: "absolute",
+      left: "-15px",
+      top: "50%",
+      transform: "translateY(-50%)",
+      zIndex: 2,
+      cursor: "pointer",
+      }}
+      onClick={onClick}
+      >
+      <i className="fa fa-arrow-left" style={{ color: "black", fontSize: "1rem" }}></i>
+    </div>      
+    
+  )
+}
 
 const NewItems = () => {
-  const [ newItems, setNewItems ] = useState([]);
+
+  const settings = {    
+    infinite: true,
+    slidesToShow: 4,
+    slidesToScroll: 1,    
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+    responsive: [
+     {
+      breakpoint: 1400,
+      settings: {
+        slidesToShow: 3,
+      },
+     },
+     {
+      breakpoint: 990,
+      settings: {
+        slidesToShow: 2,
+      },
+     },
+     {
+      breakpoint: 605,
+      settings: {
+        slidesToShow: 1,
+      }
+     },
+    ],
+  };
+
+  const [ newItems, setNewItems ] = useState([]);  
 
   useEffect(() => {
     async function fetchNewItems() {
@@ -32,62 +123,64 @@ const NewItems = () => {
               <div className="small-border bg-color-2"></div>
             </div>
           </div>
-          {newItems.map((item) => (
-            <div className="col-lg-3 col-md-6 col-sm-6 col-xs-12" key={item.id}>
-              <div className="nft__item">
-                <div className="author_list_pp">
-                  <Link
-                    to={`/author/${item.authorId}`}
-                    data-bs-toggle="tooltip"
-                    data-bs-placement="top"
-                    title={item.title}
-                  >
-                    <img className="lazy" src={item.authorImage} alt="" />
-                    <i className="fa fa-check"></i>
-                  </Link>
-                </div>
-                {item.expiryDate !== null ? <CountDown expiryDate={item.expiryDate} /> : null}
-          
-                <div className="nft__item_wrap">
-                  <div className="nft__item_extra">
-                    <div className="nft__item_buttons">
-                      <button>Buy Now</button>
-                      <div className="nft__item_share">
-                        <h4>Share</h4>
-                        <a href="" target="_blank" rel="noreferrer">
-                          <i className="fa fa-facebook fa-lg"></i>
-                        </a>
-                        <a href="" target="_blank" rel="noreferrer">
-                          <i className="fa fa-twitter fa-lg"></i>
-                        </a>
-                        <a href="">
-                          <i className="fa fa-envelope fa-lg"></i>
-                        </a>
+          <div className="slider-container">
+            <Slider {...settings} >
+                {newItems.map((item) => (                  
+                    <div className="nft__item" key={item.id}>
+                      <div className="author_list_pp">
+                        <Link
+                          to={`/author/${item.authorId}`}
+                          data-bs-toggle="tooltip"
+                          data-bs-placement="top"
+                          title={item.title}
+                        >
+                          <img className="lazy" src={item.authorImage} alt="" />
+                          <i className="fa fa-check"></i>
+                        </Link>
                       </div>
-                    </div>
-                  </div>
-          
-                  <Link to={`/item-details/${item.nftId}`}>
-                    <img
-                      src={item.nftImage}
-                      className="lazy nft__item_preview"
-                      alt=""
-                    />
-                  </Link>
-                </div>
-                <div className="nft__item_info">
-                  <Link to={`/item-details/${item.nftId}`}>
-                    <h4>{item.title}</h4>
-                  </Link>
-                  <div className="nft__item_price">{item.price} ETH</div>
-                  <div className="nft__item_like">
-                    <i className="fa fa-heart"></i>
-                    <span>{item.likes}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+                      {item.expiryDate !== null ? <CountDown expiryDate={item.expiryDate} /> : null}
+                
+                      <div className="nft__item_wrap">
+                        <div className="nft__item_extra">
+                          <div className="nft__item_buttons">
+                            <button>Buy Now</button>
+                            <div className="nft__item_share">
+                              <h4>Share</h4>
+                              <a href="" target="_blank" rel="noreferrer">
+                                <i className="fa fa-facebook fa-lg"></i>
+                              </a>
+                              <a href="" target="_blank" rel="noreferrer">
+                                <i className="fa fa-twitter fa-lg"></i>
+                              </a>
+                              <a href="">
+                                <i className="fa fa-envelope fa-lg"></i>
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                
+                        <Link to={`/item-details/${item.nftId}`}>
+                          <img
+                            src={item.nftImage}
+                            className="lazy nft__item_preview"
+                            alt=""
+                          />
+                        </Link>
+                      </div>
+                      <div className="nft__item_info">
+                        <Link to={`/item-details/${item.nftId}`}>
+                          <h4>{item.title}</h4>
+                        </Link>
+                        <div className="nft__item_price">{item.price} ETH</div>
+                        <div className="nft__item_like">
+                          <i className="fa fa-heart"></i>
+                          <span>{item.likes}</span>
+                        </div>
+                      </div>
+                    </div>                  
+                ))}
+            </Slider>
+          </div>
         </div>
       </div>
     </section>
