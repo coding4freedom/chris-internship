@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import Slider from "react-slick";
 import Skeleton from "react-loading-skeleton";
+import CountDown from "../CountDown";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../../css/styles/customSlider.css";
@@ -196,31 +197,6 @@ const NewItems = () => {
     </section>
   );
 };
-
-const CountDown = ({ expiryDate }) => {
-  const [ timeLeft, setTimeLeft ] = useState(getTimeLeft(expiryDate));
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimeLeft(getTimeLeft(expiryDate))
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [ expiryDate ]);
-
-  return <div className="de_countdown">{timeLeft}</div>;
-}
-
-function getTimeLeft(unix) {
-  const milis = unix - Date.now();
-  
-  if (milis <= 0) return "0h 0m 0s"; 
-
-  const seconds = Math.floor((milis / 1000) % 60);
-  const minutes = Math.floor((milis / 1000 / 60) % 60);
-  const hours = Math.floor(milis / 1000 / 60 / 60);
-  return `${hours}h ${minutes}m ${seconds}s`
-}
 
 const SkeletonCollections = () => (
   <div className="nft__item">
