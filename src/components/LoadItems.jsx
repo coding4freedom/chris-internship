@@ -5,7 +5,7 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 
 const LoadItems = ({ items, loading, size }) => {
-    console.log(items)
+    
     return (
         <>
             {loading
