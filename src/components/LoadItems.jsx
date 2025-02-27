@@ -23,7 +23,7 @@ const LoadItems = ({ items, loading, size }) => {
                         data-bs-placement="top"
                         title={items.title}
                     >
-                        <img className="lazy" src={items.authorImage} alt="" />
+                        <img className="lazy" src={items.authorImage || items.image} alt="" />
                         <i className="fa fa-check"></i>
                     </Link>
                     </div>
